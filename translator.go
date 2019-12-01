@@ -9,8 +9,6 @@ const (
 	slash   = 47 // (/)
 )
 
-type state int
-
 const (
 	stopped state = iota
 	canStart
@@ -18,24 +16,27 @@ const (
 	canStop
 )
 
-type comment struct {
-	state       state
-	isJSON      bool
-	isMultiLine bool
-}
-
-func (cmt *comment) setState(s state) { cmt.state = s }
-
-func (cmt *comment) checkState(s state) bool { return cmt.state == s }
+type (
+	state   int
+	comment struct {
+		state       state
+		isJSON      bool
+		isMultiLine bool
+	}
+)
 
 func extract(s []byte) []byte {
-	vj := make([]byte, len(s))
-	i := 0
-	cmt := &comment{
-		state: stopped,
-	}
+	var (
+		res = make([]byte, len(s))
+		i   = 0
+		cmt = comment{}
+	)
+
 	for _, s := range s {
-		if cmt.checkState(stopped) {
+
+		switch cmt.state {
+
+		case stopped:
 			if s == quote {
 				cmt.isJSON = !cmt.isJSON
 			}
@@ -49,22 +50,22 @@ func extract(s []byte) []byte {
 			}
 
 			if s == slash {
-				cmt.setState(canStart)
+				cmt.state = canStart
 				continue
 			}
-		}
 
-		if cmt.checkState(canStart) && (s == slash || s == star) {
-			cmt.setState(started)
-			if s == star {
-				cmt.isMultiLine = true
+		case canStart:
+			if s == slash || s == star {
+				cmt.state = started
+				if s == star {
+					cmt.isMultiLine = true
+				}
+				continue
 			}
-			continue
-		}
 
-		if cmt.checkState(started) {
+		case started:
 			if s == star {
-				cmt.setState(canStop)
+				cmt.state = canStop
 				continue
 			}
 
@@ -72,21 +73,24 @@ func extract(s []byte) []byte {
 				if cmt.isMultiLine {
 					continue
 				}
-				cmt.setState(stopped)
+				cmt.state = stopped
 			}
 
 			continue
+
+		case canStop:
+			if s == slash {
+				cmt.state = stopped
+				cmt.isMultiLine = false
+				continue
+			}
+
 		}
 
-		if cmt.checkState(canStop) && (s == slash) {
-			cmt.setState(stopped)
-			cmt.isMultiLine = false
-			continue
-		}
 	addJSON:
-		vj[i] = s
+		res[i] = s
 		i++
 	}
 
-	return vj[:i]
+	return res[:i]
 }

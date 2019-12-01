@@ -4,7 +4,6 @@
 
 <p align="center">
   <i>JSON with comments for Go!</i> <br>
-  <i><a href="https://travis-ci.com/muhammadmuzzammil1998/jsonc" target="_blank"><img src="https://travis-ci.com/muhammadmuzzammil1998/jsonc.svg?branch=master" alt="travisci"></a></i>
 </p>
 
 JSONC is a superset of JSON which supports comments. JSON formatted files are readable to humans but the lack of comments decreases readability. With JSONC, you can use block (`/* */`) and single line (`//`) comments to describe the functionality. Microsoft VS Code also uses this format in their configuration files like `settings.json`, `keybindings.json`, `launch.json`, etc.
@@ -22,12 +21,12 @@ JSONC is a superset of JSON which supports comments. JSON formatted files are re
 Run `go get` command to install the package.
 
 ```sh
-$ go get muzzammil.xyz/jsonc
+go get github.com/akshaybharambe14/jsonc
 ```
 
 ### Import jsonc
 
-Import `muzzammil.xyz/jsonc` to your source file.
+Import `github.com/akshaybharambe14/jsonc` to your source file.
 
 ```go
 package main
@@ -35,7 +34,7 @@ package main
 import (
   "fmt"
 
-  "muzzammil.xyz/jsonc"
+  "github.com/akshaybharambe14/jsonc"
 )
 ```
 
@@ -62,4 +61,4 @@ $ go run app.go
 
 ## Contributions
 
-Contributions are welcome but kindly follow the Code of Conduct and guidlines. Please don't make Pull Requests for typographical errors, grammatical mistakes, "sane way" of doing it, etc. Open an issue for it. Thanks!
+Contributions are welcome but kindly follow the Code of Conduct and guidelines. Please don't make Pull Requests for typographical errors, grammatical mistakes, "sane way" of doing it, etc. Open an issue for it. Thanks!

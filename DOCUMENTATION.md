@@ -5,14 +5,14 @@
 Converts JSONC to JSON equivalent by removing all comments.
 
 ```go
-func ToJSON(b []byte) []byte
+func ToJSON(r io.Reader) []byte
 ```
 
 Example:
 
 ```go
 func main() {
-  j := []byte(`{"foo": /*comment*/ "bar"}`)
+  j := strings.NewReader(`{"foo": /*comment*/ "bar"}`)
   jc := jsonc.ToJSON(j)
   fmt.Println(string(jc)) // {"foo":"bar"}
 }
