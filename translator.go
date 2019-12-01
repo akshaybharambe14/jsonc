@@ -1,25 +1,3 @@
-// MIT License
-
-// Copyright (c) 2019 Muhammad Muzzammil
-
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
 package jsonc
 
 const (
@@ -46,15 +24,11 @@ type comment struct {
 	isMultiLine bool
 }
 
-func (cmt *comment) setState(s state) {
-	cmt.state = s
-}
+func (cmt *comment) setState(s state) { cmt.state = s }
 
-func (cmt *comment) checkState(s state) bool {
-	return cmt.state == s
-}
+func (cmt *comment) checkState(s state) bool { return cmt.state == s }
 
-func translate(s []byte) []byte {
+func extract(s []byte) []byte {
 	vj := make([]byte, len(s))
 	i := 0
 	cmt := &comment{
@@ -67,19 +41,17 @@ func translate(s []byte) []byte {
 			}
 
 			if cmt.isJSON {
-				vj[i] = s
-				i++
-				continue
-			} else {
-				if s == space || s == tab || s == newLine {
-					continue
-				}
+				goto addJSON
 			}
-		}
 
-		if cmt.checkState(stopped) && s == slash {
-			cmt.setState(canStart)
-			continue
+			if s == space || s == tab || s == newLine {
+				continue
+			}
+
+			if s == slash {
+				cmt.setState(canStart)
+				continue
+			}
 		}
 
 		if cmt.checkState(canStart) && (s == slash || s == star) {
@@ -111,7 +83,7 @@ func translate(s []byte) []byte {
 			cmt.isMultiLine = false
 			continue
 		}
-
+	addJSON:
 		vj[i] = s
 		i++
 	}

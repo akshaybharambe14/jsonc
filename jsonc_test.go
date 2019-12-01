@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -62,7 +63,7 @@ func TestToJSON(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := ToJSON(tt.arg)
+			got := ToJSON(strings.NewReader(s(tt.arg)))
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ToJSON() = %v, want %v", s(got), s(tt.want))
 			}
